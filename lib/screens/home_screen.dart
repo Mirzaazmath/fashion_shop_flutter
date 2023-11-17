@@ -1,4 +1,6 @@
+import 'package:fashion_shop_flutter/providers/category_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'detail_screen.dart';
 
@@ -39,24 +41,33 @@ class HomeScreen extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
                   height: 50,
-                  child: Row(
-                    children: [
-                      for(int i=0;i<optionList.length;i++)...[
-                        Container(
-                          height: 40,
-                          padding:const  EdgeInsets.symmetric(horizontal: 15),
-                          margin:const  EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: i==1?Colors.black:Colors.transparent,
-                            borderRadius: BorderRadius.circular(35),
-                            border: Border.all(),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(optionList[i],style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold,color:i==1?Colors.white: Colors.black)),
-                        )
-                      ]
-                    ],
+                  child: Consumer<CategoryProvider>(
+                    builder: (context,provider,widget) {
+                      return Row(
+                        children: [
+                          for(int i=0;i<optionList.length;i++)...[
+                            GestureDetector(
+                              onTap:(){
+                                provider.updateCategory(i);
+                                },
+                              child: Container(
+                                height: 40,
+                                padding:const  EdgeInsets.symmetric(horizontal: 15),
+                                margin:const  EdgeInsets.symmetric(horizontal: 10),
+                                decoration: BoxDecoration(
+                                  color: i==provider.index?Colors.black:Colors.transparent,
+                                  borderRadius: BorderRadius.circular(35),
+                                  border: Border.all(),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(optionList[i],style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold,color:i==provider.index?Colors.white: Colors.black)),
+                              ),
+                            )
+                          ]
+                        ],
 
+                      );
+                    }
                   ),
                 ),
               ),
@@ -100,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const DetailScreen()));
                     },
                     child: Container(
-                      height: 300,
+                      height: 250,
                       padding: const EdgeInsets.all(15),
                       width: double.infinity,
                       margin: const EdgeInsets.all(20),
@@ -113,11 +124,16 @@ class HomeScreen extends StatelessWidget {
                         children: [
 
                           Column(
+
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text("Hoody T-Shirt",style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),),
-                             AspectRatio(aspectRatio:1.4,
-                             child:  Image.asset("assets/shirt1.png"),)
+                            SizedBox(
+                              height: 200,
+                             width: double.infinity,
+                             child:  Hero(
+                               tag: "shirt1",
+                                 child: Image.asset("assets/shirt1.png")),)
 
                             ],
                           ),

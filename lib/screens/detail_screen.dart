@@ -1,4 +1,6 @@
+import 'package:fashion_shop_flutter/providers/size_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'mycart_screen.dart';
 List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
@@ -18,6 +20,7 @@ List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
         color: Colors.black,
 
             child: Container(
+              height: 450,
 
               decoration:const  BoxDecoration(
                 color: Colors.white,
@@ -33,47 +36,74 @@ List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
                       children: [
                         Expanded(child: Text("Slim Fit\nHooded T-Shirt",style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold,color: Colors.black),)),
                         const SizedBox(width: 30,),
-                        Container(
-                          height: 60,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(35),
-                            border: Border.all(),
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            height: 60,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(35),
+                              border: Border.all(),
+                            ),
+                            child:const  Icon(Icons.arrow_back),
                           ),
-                          child:const  Icon(Icons.arrow_back),
                         ),
 
                       ],
                     ),
 
                   ),
-                  AspectRatio(aspectRatio:1.4,
-                    child:  Image.asset("assets/shirt1.png"),),
-                  const  SizedBox(height: 20,),
+                  Consumer<SizeProvider>(
+                    builder: (context,provider,widget) {
+                      return AnimatedContainer(
+                        duration:const  Duration(milliseconds: 300),
+                        curve: Curves.fastEaseInToSlowEaseOut,
+
+
+                        height:  getSize(provider.size),
+
+                        child:  Hero(
+                          tag: "shirt1",
+                            child: Image.asset("assets/shirt1.png")),);
+                    }
+                  ),
+                  const Spacer(),
+                  // const  SizedBox(height: 20,),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: SizedBox(
                         height: 30,
-                        child: Row(
-                          children: [
-                            for(int i=0;i<sizeList.length;i++)...[
-                              Container(
-                                height: 40,
-                                padding:const  EdgeInsets.symmetric(horizontal: 15),
-                                margin:const  EdgeInsets.symmetric(horizontal: 10),
-                                decoration: BoxDecoration(
-                                  color: i==1?Colors.black:Colors.transparent,
-                                  borderRadius: BorderRadius.circular(35),
-                                  border: Border.all(),
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(sizeList[i],style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold,color:i==1?Colors.white: Colors.black)),
-                              )
-                            ]
-                          ],
+                        child: Consumer<SizeProvider>(
+                          builder: (context,provider,widget) {
+                            return Row(
+                              children: [
+                                for(int i=0;i<sizeList.length;i++)...[
+                                 GestureDetector(
+                                   onTap: (){
+                                     provider.updateSize(sizeList[i]);
+                                   },
+                                   child:  Container(
+                                     height: 40,
+                                     padding:const  EdgeInsets.symmetric(horizontal: 15),
+                                     margin:const  EdgeInsets.symmetric(horizontal: 10),
+                                     decoration: BoxDecoration(
+                                       color: sizeList[i]==provider.size?Colors.black:Colors.transparent,
+                                       borderRadius: BorderRadius.circular(35),
+                                       border: Border.all(),
+                                     ),
+                                     alignment: Alignment.center,
+                                     child: Text(sizeList[i],style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold,color:sizeList[i]==provider.size?Colors.white: Colors.black)),
+                                   ),
+                                 )
+                                ]
+                              ],
 
+                            );
+                          }
                         ),
                       ),
                     ),
@@ -218,4 +248,26 @@ List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
 
     );
   }
+}
+getSize(value){
+    switch(value){
+      case "S":{
+        return 200.0;
+      }
+      case "M":{
+        return 220.0;
+      }
+      case "L":{
+        return 240.0;
+      }
+      case "XL":{
+        return 260.0;
+      }
+      case "XXL":{
+        return 280.0;
+      }
+      case "Custom":{
+        return 180.0;
+      }
+    }
 }
