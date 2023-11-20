@@ -1,4 +1,6 @@
+import 'package:fashion_shop_flutter/providers/addtocart_provider.dart';
 import 'package:fashion_shop_flutter/providers/category_provider.dart';
+import 'package:fashion_shop_flutter/providers/counter_provider.dart';
 import 'package:fashion_shop_flutter/providers/size_provider.dart';
 import 'package:fashion_shop_flutter/screens/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +21,11 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context)=>CategoryProvider()),
-        ChangeNotifierProvider(create: (context)=>SizeProvider()),        //SizeProvider
+        ChangeNotifierProvider(create: (context)=>SizeProvider()),
+        ChangeNotifierProvider(create: (context)=>CounterProvider()),
+        ChangeNotifierProvider(create: (context)=>AddToCartProvider()),
+
+
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -27,7 +33,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primaryColor:const Color(0xffd6f52e),
         ),
-        home: HomeScreen(),
+        home: const HomeScreen(),
       ),
     );
   }

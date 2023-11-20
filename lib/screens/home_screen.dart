@@ -2,6 +2,8 @@ import 'package:fashion_shop_flutter/providers/category_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../data/shirt_data.dart';
+import '../providers/addtocart_provider.dart';
 import 'detail_screen.dart';
 
 List<String>optionList=["ALL","T-Shirt","Jacket","Shoes","Pants"];
@@ -108,7 +110,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const DetailScreen()));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=> DetailScreen(data: shirtList[0],)));
                     },
                     child: Container(
                       height: 250,
@@ -127,13 +129,13 @@ class HomeScreen extends StatelessWidget {
 
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Hoody T-Shirt",style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),),
+                              Text(shirtList[0].title,style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),),
                             SizedBox(
                               height: 200,
                              width: double.infinity,
                              child:  Hero(
-                               tag: "shirt1",
-                                 child: Image.asset("assets/shirt1.png")),)
+                               tag:  "${shirtList[0].id}",
+                                 child: Image.asset(shirtList[0].imageUrl)),)
 
                             ],
                           ),
@@ -156,7 +158,7 @@ class HomeScreen extends StatelessWidget {
                                     color: Colors.white
 
                                   ),
-                                  child:const  Icon(Icons.add_shopping_cart_outlined),
+                                  child:Text("View",style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),),
                                 )
                               ],
                             ),
@@ -170,39 +172,47 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20,),
               const Spacer(),
-              Container(
-                height: 60,
-                width: double.infinity,
-                padding:const  EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
+              Consumer<AddToCartProvider>(
+                builder: (context,provider,widget) {
+                  if(provider.addtoCartList.isEmpty){
+                    return const  SizedBox();
+                  }else{
+                  return Container(
+                    height: 60,
+                    width: double.infinity,
+                    padding:const  EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
 
-                ),
-                child: const Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.black,
-                      child: Text("3",style: TextStyle(color: Colors.white),),
                     ),
-                    SizedBox(width: 10,),
-                   Expanded(child:  Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     mainAxisAlignment: MainAxisAlignment.center,
-                     children: [Text("Cart",style: TextStyle(color: Colors.black),
-                     ),
-                       Text("3 Items",style: TextStyle(color: Colors.black),
-                       ),
-                     ],
+                    child:  Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Colors.black,
+                          child: Text("${provider.addtoCartList.length}",style:const  TextStyle(color: Colors.white),),
+                        ),
+                      const   SizedBox(width: 10,),
+                       Expanded(child:  Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         mainAxisAlignment: MainAxisAlignment.center,
+                         children: [
+                           const Text("Cart",style: TextStyle(color: Colors.black),
+                         ),
+                           Text("${provider.addtoCartList.length} Items",style:const  TextStyle(color: Colors.black),
+                           ),
+                         ],
 
-                   )),
-                   CircleAvatar(
-                     backgroundColor: Colors.black,
-                     child:  const Icon(Icons.add_shopping_cart_outlined,color: Colors.white,),
-                   )
-                  ],
-                ),
+                       )),
+                       CircleAvatar(
+                         backgroundColor: Colors.black,
+                         child:  const Icon(Icons.add_shopping_cart_outlined,color: Colors.white,),
+                       )
+                      ],
+                    ),
 
+                  );
+                }}
               )
 
 

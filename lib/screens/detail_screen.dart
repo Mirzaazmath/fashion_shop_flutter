@@ -1,11 +1,13 @@
+import 'package:fashion_shop_flutter/data/shirt_data.dart';
+import 'package:fashion_shop_flutter/providers/addtocart_provider.dart';
+import 'package:fashion_shop_flutter/providers/counter_provider.dart';
 import 'package:fashion_shop_flutter/providers/size_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'mycart_screen.dart';
 List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
   class DetailScreen extends StatelessWidget {
-  const DetailScreen({super.key});
+   final  Shirt data;
+  const DetailScreen({super.key,required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
                     padding: const EdgeInsets.all(10),
                     child: Row(
                       children: [
-                        Expanded(child: Text("Slim Fit\nHooded T-Shirt",style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold,color: Colors.black),)),
+                        Expanded(child: Text("Slim Fit\n${data.title}",style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold,color: Colors.black),)),
                         const SizedBox(width: 30,),
                         GestureDetector(
                           onTap: (){
@@ -65,8 +67,8 @@ List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
                         height:  getSize(provider.size),
 
                         child:  Hero(
-                          tag: "shirt1",
-                            child: Image.asset("assets/shirt1.png")),);
+                          tag: "${data.id}",
+                            child: Image.asset(data.imageUrl)),);
                     }
                   ),
                   const Spacer(),
@@ -129,27 +131,55 @@ List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
                     child:Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text("01",style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),),
-                                   const  SizedBox(height: 5,),
-                                    Container(
-                                      height: 40,
-                                      padding:const  EdgeInsets.symmetric(horizontal: 15),
-                                      margin:const  EdgeInsets.symmetric(horizontal: 10),
-                                      decoration: BoxDecoration(
-                                        color:Theme.of(context).primaryColor,
-                                        borderRadius: BorderRadius.circular(35),
-                                        border: Border.all(color: Colors.grey.shade300),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text("\$1500",style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold,color:Colors.black)),
-                                    )
+                      Consumer<CounterProvider>(
+                        builder: (context,provider,widget) {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        //   AnimatedSwitcher is used to animated the changes
+                                        // make sure to provide unique key to text other wise it won't work
+                                        AnimatedSwitcher(
+                                            duration:const  Duration(milliseconds: 300),
+                                            transitionBuilder:(child,animation){
+                                              // we are adding FadeTransition effect to our counter text
+                                              // here we are using SlideTransition to animate our counter in much cooler way
+                                              // and we are creating the position to animate our text in specific direction
+
+                                              final position=Tween<Offset>(
+                                                begin: const Offset(0,1) ,
+                                                end: Offset.zero,
+                                              );
+                                              return FadeTransition(
+                                                opacity: animation,
+                                                
+                                                child: SlideTransition(
+                                                  position: position.animate(animation),
+                                                  child: child,
+                                                ),);
+                                            },
+                                            child: Text(
+                                              provider.count.toString(),
+                                              key:UniqueKey(),
+                                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),)),
+                                       const  SizedBox(height: 5,),
+                                        Container(
+                                          height: 40,
+                                          padding:const  EdgeInsets.symmetric(horizontal: 15),
+                                          margin:const  EdgeInsets.symmetric(horizontal: 10),
+                                          decoration: BoxDecoration(
+                                            color:Theme.of(context).primaryColor,
+                                            borderRadius: BorderRadius.circular(35),
+                                            border: Border.all(color: Colors.grey.shade300),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Text("\$${data.amount*provider.count}",style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold,color:Colors.black)),
+                                        )
 
 
-                                  ],
-                                ),
+                                      ],
+                                    );
+                        }
+                      ),
 
 
                       ],
@@ -161,6 +191,9 @@ List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
                         right: -50,
                         child: ClipOval(
                           child: GestureDetector(
+                            onTap: (){
+                              Provider.of<CounterProvider>(context,listen: false).increment();
+                            },
                             child: Container(
                               padding: const EdgeInsets.only(left: 20),
                               width: 120,
@@ -179,6 +212,9 @@ List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
                   left: -50,
                   child: ClipOval(
                     child: GestureDetector(
+                      onTap: (){
+                        Provider.of<CounterProvider>(context,listen: false).decrement();
+                      },
                       child: Container(
                         padding: const EdgeInsets.only(right: 20),
                         width: 120,
@@ -203,37 +239,51 @@ List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
             child: Column(
               children: [
                 const    Spacer(),
-                GestureDetector(
-                  onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const MyCartScreen()));
-                  },
-                  child: Container(
-                    margin:const  EdgeInsets.symmetric(horizontal: 25),
+                Consumer<AddToCartProvider>(
+                  builder: (context,provider,widget) {
+                    return GestureDetector(
+                      onTap: (){
+                        var product=Shirt(
+                            id: data.id,
+                            title: data.title,
+                            imageUrl: data.imageUrl,
+                            amount: data.amount,
+                            count:context.read<CounterProvider>().count,
+                             size: context.read<SizeProvider>().size,
 
-                    height: 50,
-                    padding:const  EdgeInsets.only(left: 20,right: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.black87,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Add to Cart",style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white,fontWeight: FontWeight.bold),),
-                        Container(
-                          padding:const  EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25),
-                              color: Colors.white
+                        );
+                       provider.addProductToCart(product);
+                       // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const MyCartScreen()));
+                      },
+                      child: Container(
+                        margin:const  EdgeInsets.symmetric(horizontal: 25),
 
-                          ),
-                          child: const Icon(Icons.add_shopping_cart_outlined),
-                        )
-                      ],
-                    ),
+                        height: 50,
+                        padding:const  EdgeInsets.only(left: 20,right: 5),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.black87,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Add to Cart",style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white,fontWeight: FontWeight.bold),),
+                            Container(
+                              padding:const  EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(25),
+                                  color: Colors.white
 
-                  ),
+                              ),
+                              child: const Icon(Icons.add_shopping_cart_outlined),
+                            )
+                          ],
+                        ),
+
+                      ),
+                    );
+                  }
                 ),
                 const  SizedBox(height: 25,)],
             ),

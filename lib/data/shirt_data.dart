@@ -1,9 +1,19 @@
+import 'package:flutter/cupertino.dart';
+
 class Shirt{
   final int id;
   final String imageUrl;
   final String title;
   final int amount;
-  Shirt({required this.id,required this.title,required this.imageUrl,required this.amount});
+  String? size;
+  int? count;
+  Shirt({required this.id,required this.title,required this.imageUrl,required this.amount,this.count,this.size});
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "id==$id\ntitle==$title\namount==${amount*count!}\nsize==$size";
+  }
 }
 List<Shirt> shirtList=[
   Shirt(title: "Hoody T-Shit", id: 1, imageUrl: "assets/shirt1.png", amount: 150),
