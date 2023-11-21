@@ -7,8 +7,16 @@ class AddToCartProvider extends ChangeNotifier{
 
   get addtoCartList=>_addtoCartList;
 
+  void removeProduct(var product){
+
+    _addtoCartList.remove(product);
+    notifyListeners();
+  }
+
   void addProductToCart(var product){
-    if(_addtoCartList.contains(product)){
+    final bool _productIsInList =
+    _addtoCartList.any((product) => product.id == product.id);
+    if(_productIsInList){
 
     }else{
       _addtoCartList.add(product);

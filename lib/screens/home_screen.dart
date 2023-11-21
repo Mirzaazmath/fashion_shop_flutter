@@ -1,10 +1,12 @@
 import 'package:fashion_shop_flutter/providers/category_provider.dart';
+import 'package:fashion_shop_flutter/utils/show_up_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../data/shirt_data.dart';
 import '../providers/addtocart_provider.dart';
 import 'detail_screen.dart';
+import 'mycart_screen.dart';
 
 List<String>optionList=["ALL","T-Shirt","Jacket","Shoes","Pants"];
 
@@ -129,40 +131,45 @@ class HomeScreen extends StatelessWidget {
 
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(shirtList[0].title,style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),),
-                            SizedBox(
-                              height: 200,
+                              ShowUpAnimation(child: Text(shirtList[0].title,style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),)),
+                           ShowUpAnimation(
+                             delay: 200,
+                               child:  SizedBox(
+                             height: 200,
                              width: double.infinity,
                              child:  Hero(
-                               tag:  "${shirtList[0].id}",
-                                 child: Image.asset(shirtList[0].imageUrl)),)
+                                 tag:  "${shirtList[0].id}",
+                                 child: Image.asset(shirtList[0].imageUrl)),))
 
                             ],
                           ),
-                          Container(
-                            height: 50,
-                            padding:const  EdgeInsets.only(left: 20,right: 5),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.black87,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("\$ 150",style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white,fontWeight: FontWeight.bold),),
-                                Container(
-                                  padding:const  EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(25),
-                                    color: Colors.white
+                          ShowUpAnimation(
+                            delay: 400,
+                            child: Container(
+                              height: 50,
+                              padding:const  EdgeInsets.only(left: 20,right: 5),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.black87,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("\$ 150",style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white,fontWeight: FontWeight.bold),),
+                                  Container(
+                                    padding:const  EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25),
+                                      color: Colors.white
 
-                                  ),
-                                  child:Text("View",style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),),
-                                )
-                              ],
-                            ),
+                                    ),
+                                    child:Text("View",style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),),
+                                  )
+                                ],
+                              ),
 
+                            ),
                           ),
                         ],
                       ),
@@ -177,40 +184,45 @@ class HomeScreen extends StatelessWidget {
                   if(provider.addtoCartList.isEmpty){
                     return const  SizedBox();
                   }else{
-                  return Container(
-                    height: 60,
-                    width: double.infinity,
-                    padding:const  EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
+                  return GestureDetector(
+                    onTap: (){
+                       Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const MyCartScreen()));
+                    },
+                    child: Container(
+                      height: 60,
+                      width: double.infinity,
+                      padding:const  EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
 
-                    ),
-                    child:  Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.black,
-                          child: Text("${provider.addtoCartList.length}",style:const  TextStyle(color: Colors.white),),
-                        ),
-                      const   SizedBox(width: 10,),
-                       Expanded(child:  Column(
-                         crossAxisAlignment: CrossAxisAlignment.start,
-                         mainAxisAlignment: MainAxisAlignment.center,
-                         children: [
-                           const Text("Cart",style: TextStyle(color: Colors.black),
-                         ),
-                           Text("${provider.addtoCartList.length} Items",style:const  TextStyle(color: Colors.black),
+                      ),
+                      child:  Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.black,
+                            child: Text("${provider.addtoCartList.length}",style:const  TextStyle(color: Colors.white),),
+                          ),
+                        const   SizedBox(width: 10,),
+                         Expanded(child:  Column(
+                           crossAxisAlignment: CrossAxisAlignment.start,
+                           mainAxisAlignment: MainAxisAlignment.center,
+                           children: [
+                             const Text("Cart",style: TextStyle(color: Colors.black),
                            ),
-                         ],
+                             Text("${provider.addtoCartList.length} Items",style:const  TextStyle(color: Colors.black),
+                             ),
+                           ],
 
-                       )),
-                       CircleAvatar(
-                         backgroundColor: Colors.black,
-                         child:  const Icon(Icons.add_shopping_cart_outlined,color: Colors.white,),
-                       )
-                      ],
+                         )),
+                         CircleAvatar(
+                           backgroundColor: Colors.black,
+                           child:  const Icon(Icons.add_shopping_cart_outlined,color: Colors.white,),
+                         )
+                        ],
+                      ),
+
                     ),
-
                   );
                 }}
               )

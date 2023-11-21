@@ -253,7 +253,7 @@ List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
 
                         );
                        provider.addProductToCart(product);
-                       // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const MyCartScreen()));
+
                       },
                       child: Container(
                         margin:const  EdgeInsets.symmetric(horizontal: 25),
@@ -265,20 +265,31 @@ List<String>sizeList=["S", "M", "L", "XL","XXL","Custom"];
                           color: Colors.black87,
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Add to Cart",style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white,fontWeight: FontWeight.bold),),
-                            Container(
-                              padding:const  EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(25),
-                                  color: Colors.white
+                        child: Consumer<AddToCartProvider>(
+                          builder: (context,provider,widget) {
+                            final bool _productIsInList =
+                            provider.addtoCartList.any((product) => product.id == data.id);
 
-                              ),
-                              child: const Icon(Icons.add_shopping_cart_outlined),
-                            )
-                          ],
+
+
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+
+                                  _productIsInList?"Added to Cart": "Add to Cart",style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white,fontWeight: FontWeight.bold),),
+                                Container(
+                                  padding:const  EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25),
+                                      color: Colors.white
+
+                                  ),
+                                  child:  Icon(_productIsInList? Icons.done: Icons.add_shopping_cart_outlined),
+                                )
+                              ],
+                            );
+                          }
                         ),
 
                       ),
